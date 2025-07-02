@@ -31,4 +31,21 @@ public class PostsController : ControllerBase {
 
         return post;
     }
+
+    // POST /posts
+    [HttpPost]
+    public IActionResult CreatePost([FromBody] PostDto postDto)
+    {
+        // simple validation
+        if (string.IsNullOrWhiteSpace(postDto.Title))
+        {
+            return BadRequest(new { errors = new[] { "Title cannot be blank" } });
+        }
+
+        // use the service to create post
+        var createdPost = _postService.CreatePost(postDto);
+
+        // return 201 Created with the new post
+        return Created("", new { post = new { createdPost.Title, createdPost.Body } });
+    }
 }
